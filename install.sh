@@ -8,12 +8,18 @@ localUser=username
 localHost=hostname
 
 # Install some programs
+echo "***************************** Programs *****************************************"
+echo "Installing emacs..."
 apt-get install emacs
+echo "Installing screen..."
 apt-get install screen
+echo "Installing firefox..."
 apt-get install firefox-esr
 
 # Install media services
-
+echo "************************** Media Services ***************************************"
+echo "Installing bt-speaker..."
 git clone https://github.com/shoefone/bt-speaker.git
 cd bt-speaker
 ./install.sh
+cd ..
