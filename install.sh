@@ -11,3 +11,9 @@ localHost=hostname
 apt-get install emacs
 apt-get install screen
 apt-get install firefox-esr
+
+# Install media services
+
+git clone https://github.com/shoefone/bt-speaker.git
+cd bt-speaker
+./install.sh
