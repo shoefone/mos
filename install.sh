@@ -7,6 +7,15 @@
 localUser=username
 localHost=hostname
 
+# Choices here should follow the terminology used by Alsa
+# Common values are 'Headphones' (3.5mm jack), 'vc4hdmi0' (HDMI0 port), and 'vc4hdmi1' (HDMI1 port)
+kodiAudioDevice=hw:vc4hdmi0
+shairportAudioDevice=hw:Headphones
+bluetoothAudioDevice=hw:Headphones
+owntoneAudioDevice=hw:Headphones
+
+#kodiVideoDevice
+
 # Bring Apt up-to-date
 echo "***************************** General ******************************************"
 apt-get -y update
@@ -62,6 +71,11 @@ make install
 cd ..
 
 echo "Configuring nqptp & shairport-sync..."
+# Set the audio output device to the desired output devices...
+shairportConfigFile=/etc/shairport-sync.conf
+oldAlsaDevice=\\\/\\\/\\toutput_device\ =\ \"default\"\;
+newAlsaDevice=\\toutput_device\ =\ \"$shairportAudioDevice\"\;
+sed -i "s/^$oldAlsaDevice/$newAlsaDevice/" $shairportConfigFile
 
 echo "Starting nqptp & shairport-sync..."
 systemctl enable nqptp
