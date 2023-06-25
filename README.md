@@ -18,6 +18,8 @@ Among the functions added are:
 To be added:
 - Apple audio library (compatible with iTunes remote) (via Owntone)
 - Kodi
+- Local Media Filesharing
+- Local HTTP interface for movies/TV
 - Other...
 
 # Hardware
