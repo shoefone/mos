@@ -57,3 +57,11 @@ autoreconf -fi
 make
 make install
 cd ..
+
+echo "Configuring nqptp & shairport-sync..."
+
+echo "Starting nqptp & shairport-sync..."
+systemctl enable nqptp
+systemctl start nqptp
+systemctl enable shairport-sync
+systemctl start shairport-sync
