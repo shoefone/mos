@@ -40,6 +40,9 @@ cd bt-speaker
 ./install.sh
 cd ..
 
+echo "Starting bt-speaker..."
+systemctl start bt_speaker
+
 echo "Installing nqptp & shairport-sync..."
 git clone https://github.com/mikebrady/nqptp.git
 cd nqptp
