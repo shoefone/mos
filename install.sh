@@ -9,6 +9,8 @@ localHost=hostname
 
 # Choices here should follow the terminology used by Alsa
 # Common values are 'Headphones' (3.5mm jack), 'vc4hdmi0' (HDMI0 port), and 'vc4hdmi1' (HDMI1 port)
+# Get Alsa device list with $aplay -l
+# Get shairport-sync device list with shairport-sync -h
 kodiAudioDevice=hw:vc4hdmi0
 shairportAudioDevice=hw:Headphones
 bluetoothAudioDevice=hw:Headphones
