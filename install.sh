@@ -7,11 +7,12 @@
 localUser=username
 localHost=hostname
 
-# Install some programs
+# Bring Apt up-to-date
 echo "***************************** General ******************************************"
 apt-get -y update
 apt-get -y upgrade
 
+# Install some programs
 echo "***************************** Programs *****************************************"
 echo "Installing emacs..."
 apt-get -y install emacs
@@ -19,6 +20,17 @@ echo "Installing screen..."
 apt-get -y install screen
 echo "Installing firefox..."
 apt-get -y install firefox-esr
+echo "Installing Samba..."
+apt-get -y install samba samba-common-bin
+echo "Installing build software (for shairport-sync)..."
+apt-get -y install --no-install-recommends \
+	build-essential \
+	git \
+	autoconf automake \
+	libtool libpopt-dev libconfig-dev libasound2-dev \
+	avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev \
+	libplist-dev libsodium-dev libavutil-dev libavcodec-dev \
+	libavformat-dev uuid-dev libgcrypt-dev xxd
 
 # Install media services
 echo "************************** Media Services ***************************************"
