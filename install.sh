@@ -8,6 +8,10 @@ localUser=username
 localHost=hostname
 
 # Install some programs
+echo "***************************** General ******************************************"
+apt-get -y update
+apt-get -y upgrade
+
 echo "***************************** Programs *****************************************"
 echo "Installing emacs..."
 apt-get -y install emacs
