@@ -10,11 +10,11 @@ localHost=hostname
 # Install some programs
 echo "***************************** Programs *****************************************"
 echo "Installing emacs..."
-apt-get install emacs
+apt-get -y install emacs
 echo "Installing screen..."
-apt-get install screen
+apt-get -y install screen
 echo "Installing firefox..."
-apt-get install firefox-esr
+apt-get -y install firefox-esr
 
 # Install media services
 echo "************************** Media Services ***************************************"
