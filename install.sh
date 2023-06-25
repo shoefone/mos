@@ -39,3 +39,21 @@ git clone https://github.com/shoefone/bt-speaker.git
 cd bt-speaker
 ./install.sh
 cd ..
+
+echo "Installing nqptp & shairport-sync..."
+git clone https://github.com/mikebrady/nqptp.git
+cd nqptp
+autoreconf -fi
+./configure --with-systemd-startup
+make
+make install
+cd ..
+
+git clone https://github.com/mikebrady/shairport-sync.git
+cd shairport-sync
+autoreconf -fi
+./configure --sysconfdir=/etc --with-alsa \
+    --with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2
+make
+make install
+cd ..
