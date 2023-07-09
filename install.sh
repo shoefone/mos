@@ -29,13 +29,30 @@ echo "***************************** Userinput **********************************
 # Prompt to choose music audio out
 #dialog --radiolist "Audio output for music:" 0 0 0 \
 # Prompt to choose video audio out
-
+echo "////////////////// Audio Devices \\\\\\\\\\\\\\\\\\\\"
 kodiAudioDevice=hw:vc4hdmi0
 shairportAudioDevice=hw:Headphones
 bluetoothAudioDevice=hw:Headphones
 owntoneAudioDevice=hw:Headphones
 
+echo "////////////////// Video Devices \\\\\\\\\\\\\\\\\\\\"
 #kodiVideoDevice
+
+echo "////////////////// Disks \\\\\\\\\\\\\\\\\\\\"
+# Disks
+filesystem1=/dev/sda1
+mountpoint1=/mnt/music
+disktype1=ext4
+
+# Folders
+musicFolders=
+tvFolders=
+movieFolders=
+
+echo "////////////////// Network \\\\\\\\\\\\\\\\\\\\"
+# Samba
+shareName=mediaShare
+sharePath=/media/sda1
 
 # Install some programs
 echo "***************************** Programs *****************************************"
