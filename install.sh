@@ -67,15 +67,47 @@ echo "Installing screen..." # GUI utilities
 apt-get -y install gparted
 echo "Installing Samba..." # Media sharing (NAS functionality)
 apt-get -y install samba samba-common-bin
-echo "Installing build software (for shairport-sync)..."
+echo "Installing build software (for shairport-sync & owntone)..."
 apt-get -y install --no-install-recommends \
-	build-essential \
-	git \
-	autoconf automake \
-	libtool libpopt-dev libconfig-dev libasound2-dev \
-	avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev \
-	libplist-dev libsodium-dev libavutil-dev libavcodec-dev \
-	libavformat-dev uuid-dev libgcrypt-dev xxd
+	avahi-daemon \	
+        autoconf \
+        automake \
+        autotools-dev \
+        bison \	
+        build-essential \
+        flex \    
+        gawk \
+        gettext \	    
+        git \
+        gperf \
+	libtool \
+	libpopt-dev \
+	libconfig-dev \
+	libasound2-dev \
+	libavahi-client-dev \
+	libavcodec-dev \
+        libavfilter-dev \	
+	libavformat-dev \	
+	libavutil-dev \
+	libconfuse-dev \
+        libcurl4-openssl-dev \
+        libevent-dev \
+	libgcrypt-dev \
+	libgcrypt20-dev \	
+        libjson-c-dev \
+        libmxml-dev \
+	libssl-dev \
+        libsoxr-dev \
+	libplist-dev \
+        libprotobuf-c-dev \
+	libsodium-dev \
+        libsqlite3-dev \
+        libswscale-dev \
+        libunistring-dev \
+        libwebsockets-dev \
+	uuid-dev \
+        zlib1g-dev \
+	xxd
 
 # Setup disks
 echo "*************************** Setup Disks *****************************************"
