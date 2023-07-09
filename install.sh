@@ -76,6 +76,34 @@ apt-get -y install --no-install-recommends \
 	libplist-dev libsodium-dev libavutil-dev libavcodec-dev \
 	libavformat-dev uuid-dev libgcrypt-dev xxd
 
+# Setup disks
+echo "*************************** Setup Disks *****************************************"
+
+mkdir $mountpoint1
+# Define and insert the disk entries into fstab
+# TODO : List of entries, not single entry
+fstab1=$filesystem1 $mountpoint1 $disktype1 defaults 0 2
+echo $fstab1 | tee -a /etc/fstab
+
+
+# Setup Samba
+echo "***************************** NAS Setup *****************************************"
+# Samba is already installed, so only some setup is needed
+# Insert the share at the end of the samba configuration file
+
+echo "" | tee -a /etc/samba/smb.conf
+echo "" | tee -a /etc/samba/smb.conf
+echo [$shareName] | tee -a /etc/samba/smb.conf
+echo "   comment = $shareName" | tee -a /etc/samba/smb.conf
+echo "   path = $sharePath" | tee -a /etc/samba/smb.conf
+echo "   browsable = yes" | tee -a /etc/samba/smb.conf
+echo "   read only = no" | tee -a /etc/samba/smb.conf
+echo "   writable = yes" | tee -a /etc/samba/smb.conf
+echo "   browsable = yes" | tee -a /etc/samba/smb.conf
+echo "   public = yes" | tee -a /etc/samba/smb.conf
+echo "   create mask = 0644" | tee -a /etc/samba/smb.conf
+echo "   directory mask = 0755" | tee -a /etc/samba/smb.conf
+
 # Install media services
 echo "************************** Media Services ***************************************"
 echo "Installing bt-speaker..."
