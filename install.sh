@@ -41,18 +41,19 @@ echo "////////////////// Video Devices \\\\\\\\\\\\\\\\\\\\"
 echo "////////////////// Disks \\\\\\\\\\\\\\\\\\\\"
 # Disks
 filesystem1=/dev/sda1
-mountpoint1=/mnt/music
+mountpoint1=/media/sda1
 disktype1=ext4
 
 # Folders
-musicFolders=
-tvFolders=
-movieFolders=
+# TODO : Add support for a list of media sources, not a single path
+musicFolder=$mountpoint1/music
+tvFolder=
+movieFolder=
 
 echo "////////////////// Network \\\\\\\\\\\\\\\\\\\\"
 # Samba
 shareName=mediaShare
-sharePath=/media/sda1
+sharePath=$mountpoint1
 
 # Install some programs
 echo "***************************** Programs *****************************************"
