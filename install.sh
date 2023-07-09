@@ -113,6 +113,9 @@ apt-get -y install --no-install-recommends \
 echo "*************************** Setup Disks *****************************************"
 
 mkdir $mountpoint1
+# TODO : Confirm these are the appropriate permissions for a mounted drive that's being shared
+chmod 2775 $mountpoint1
+
 # Define and insert the disk entries into fstab
 # TODO : List of entries, not single entry
 fstab1=$filesystem1 $mountpoint1 $disktype1 defaults 0 2
@@ -136,6 +139,8 @@ echo "   browsable = yes" | tee -a /etc/samba/smb.conf
 echo "   public = yes" | tee -a /etc/samba/smb.conf
 echo "   create mask = 0644" | tee -a /etc/samba/smb.conf
 echo "   directory mask = 0755" | tee -a /etc/samba/smb.conf
+
+echo "WARNING :: YOU WILL NEED TO SETUP A SAMBA USER IN ORDER TO ACCESS THE SHARED FOLDER!"
 
 # Install media services
 echo "************************** Media Services ***************************************"
