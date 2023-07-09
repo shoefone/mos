@@ -149,3 +149,25 @@ systemctl enable nqptp
 systemctl start nqptp
 systemctl enable shairport-sync
 systemctl start shairport-sync
+
+echo "-----------------------------   owntone    -----------------------------------"
+echo "Installing owntone..."
+git clone https://github.com/owntone/owntone-server.git
+cd owntone-server
+autoreconf -i
+#enable-install-user means that a User and Group will be added for owntone
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-install-user
+make
+make install
+cd ..
+
+echo "Configuring owntone..."
+# Change the directories{} entry in the library{} element to point to our music directory
+# Set the audio output device to the desired output devices...
+owntoneConfigFile=/etc/owntone.conf
+oldOwntoneDirpath=\tdirectories = { \"/srv/music\" };
+newOwntoneDirpath=\tdirectories = { \"$musicFolder\" };
+sed -i "s/^$oldOwntoneDirpath/$newOwntoneDirpath/" $owntoneConfigFile
+
+echo "Starting owntone..."
+systemctl start owntone
