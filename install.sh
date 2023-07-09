@@ -58,10 +58,12 @@ sharePath=/media/sda1
 echo "***************************** Programs *****************************************"
 echo "Installing emacs..." # Generally useful
 apt-get -y install emacs
-echo "Installing screen..." # Generally useful
-apt-get -y install screen
 echo "Installing firefox..." # If any GUI webwork needs to be done
 apt-get -y install firefox-esr
+echo "Installing screen..." # Command line utilities
+apt-get -y install screen
+echo "Installing screen..." # GUI utilities
+apt-get -y install gparted
 echo "Installing Samba..." # Media sharing (NAS functionality)
 apt-get -y install samba samba-common-bin
 echo "Installing build software (for shairport-sync)..."
