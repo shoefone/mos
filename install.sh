@@ -107,16 +107,19 @@ echo "   directory mask = 0755" | tee -a /etc/samba/smb.conf
 
 # Install media services
 echo "************************** Media Services ***************************************"
-echo "Installing bt-speaker..."
+echo "-------------------------   bt-speaker    ---------------------------------------"
+echo "Installing..."
 git clone https://github.com/shoefone/bt-speaker.git
 cd bt-speaker
 ./install.sh
 cd ..
 
-echo "Starting bt-speaker..."
+echo "Starting..."
 systemctl start bt_speaker
 
+echo "-------------------------   nqptp & shairport    --------------------------------"
 echo "Installing nqptp & shairport-sync..."
+# Thanks, Mike Brady!
 git clone https://github.com/mikebrady/nqptp.git
 cd nqptp
 autoreconf -fi
