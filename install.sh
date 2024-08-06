@@ -1,19 +1,33 @@
 #!/bin/bash
 # This shell script is designed to be run on a newly-imaged raspberry pi computer
 # Base is: Raspberry Pi 4B with Raspberry Pi OS (Debian v11 Bullseye / systemd)
+# Runs with current RPiOS/64bit on RPi4B/4GB as of 20240805
 
 # It is designed to be run as root
+if [[ $EUID > 0 ]]
+  then echo "Please run as root"
+  exit
+fi
+
+# Setup logging
+alias apt-get="apt-get -qq"
+stdLogfileName="install.log"
+errLogfileName="install_err.log"
 
 # Set some global variables (always a good start!)
 localUser=username
 localHost=hostname
 
+
 # Bring Apt up-to-date
-echo "***************************** General ******************************************"
-apt-get -y update
-apt-get -y upgrade
-echo "Installing dialog..." # GUI for shellscript
-apt-get -y install dialog
+echo "***************************** Update Apt & System ******************************************"
+{
+    apt-get update
+    apt-get upgrade
+} 1>> apt-get_01_system-stdout.log 2>> apt-get_01_system-stderr.log
+
+#echo "Installing dialog..." # GUI for shellscriptn
+#apt-get install dialog | tee -a apt-get_02_dialog.log
 
 # Get the userinput needed for processing
 echo "***************************** Userinput ****************************************"
@@ -59,35 +73,28 @@ shareName=mediaShare
 sharePath=$mountpoint1
 
 # Install some programs
-echo "***************************** Programs *****************************************"
-echo "Installing emacs..." # Generally useful
-apt-get -y install \
-	emacs firefox-esr screen gparted \
-    | tee apt-get_userland.log
-echo "Installing Samba..." # Media sharing (NAS functionality)
-apt-get -y install \
-	samba samba-common-bin \
-    | tee apt-get_samba.log
+echo "***************************** Installation *****************************************"
+runInstall() {
+    echo Installing $1
+    apt-get install --no-install-recommends -y -qq $2 1>> $stdLogfileName 2>> $errLogfileName
+}
 
-echo "Installing build software (for shairport-sync & owntone)..." # autoconf ( & some others) aren't being installed. This list may be broken.
-#Shairport-sync	
-apt-get -y install --no-install-recommends \
-    build-essential git autoconf automake libtool libpopt-dev libconfig-dev \
+runInstall "Userland Programs" "emacs firefox-esr screen gparted"
+runInstall "Samba" "samba samba-common-bin"
+
+runInstall "Dependencies (shairport-sync)" \
+    "build-essential git autoconf automake libtool libpopt-dev libconfig-dev \
     libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev \
     libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev \
-    uuid-dev libgcrypt-dev xxd \
-    | tee apt-get_shairport-sync.log
-	
-#Owntone
-apt-get -y install \
-  build-essential git autotools-dev autoconf automake libtool gettext gawk \
+    uuid-dev libgcrypt-dev xxd"
+
+runInstall "Dependencies (owntone)" \
+  "build-essential git autotools-dev autoconf automake libtool gettext gawk \
   gperf bison flex libconfuse-dev libunistring-dev libsqlite3-dev \
   libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev libavutil-dev \
   libasound2-dev libxml2-dev libgcrypt20-dev libavahi-client-dev zlib1g-dev \
   libevent-dev libplist-dev libsodium-dev libjson-c-dev libwebsockets-dev \
-  libcurl4-openssl-dev libprotobuf-c-dev libpulse-dev \
-  | tee apt-get_owntone.log
-
+  libcurl4-openssl-dev libprotobuf-c-dev libpulse-dev"
 	
 # Setup disks
 echo "*************************** Setup Disks *****************************************"
@@ -100,7 +107,6 @@ chmod 2775 $mountpoint1
 # TODO : List of entries, not single entry
 fstab1=$filesystem1 $mountpoint1 $disktype1 defaults 0 2
 echo $fstab1 | tee -a /etc/fstab
-
 
 # Setup Samba
 echo "***************************** NAS Setup *****************************************"
@@ -122,46 +128,40 @@ echo "   directory mask = 0755" | tee -a /etc/samba/smb.conf
 
 echo "WARNING :: YOU WILL NEED TO SETUP A SAMBA USER IN ORDER TO ACCESS THE SHARED FOLDER!"
 
-sudo service smbd stop
-sudo service smbd start
-
 # Install media services
 echo "************************** Media Services ***************************************"
 echo "-------------------------   bt-speaker    ---------------------------------------"
-echo "Installing..."
-git clone https://github.com/shoefone/bt-speaker.git
-cd bt-speaker
-./install.sh
-cd ..
-
-echo "Starting..."
-systemctl start bt_speaker
+{
+    git clone https://github.com/shoefone/bt-speaker.git
+    cd bt-speaker
+    ./install.sh
+    cd ..
+} 1>> bt-speaker_install_stdout.log 2>>bt-speaker_install_stderr.log
 
 echo "-------------------------   nqptp & shairport    --------------------------------"
 echo "Installing nqptp & shairport-sync..."
-# 20240804 - need autoconf in order to have autoreconf
-apt-get install autoconf
 # Thanks, Mike Brady!
-git clone https://github.com/mikebrady/nqptp.git
-cd nqptp
-autoreconf -fi
-./configure --with-systemd-startup
-make
-make install
-cd ..
-
-#need these as of 20240804
-git clone https://github.com/mikebrady/shairport-sync.git
-cd shairport-sync
-autoreconf -fi
-# with-soxr:
-# with-avahi: avahi-based zeroconf
-# with-pa: pulseaudio backend
-./configure --sysconfdir=/etc --with-alsa \
-    --with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2 --with-pa
-make
-make install
-cd ..
+{
+    git clone https://github.com/mikebrady/nqptp.git
+    cd nqptp
+    autoreconf -fi
+    ./configure --with-systemd-startup
+    make
+    make install
+    cd ..
+    
+    git clone https://github.com/mikebrady/shairport-sync.git
+    cd shairport-sync
+    autoreconf -fi
+    # with-soxr:
+    # with-avahi: avahi-based zeroconf
+    # with-pa: pulseaudio backend
+    ./configure --sysconfdir=/etc --with-alsa \
+		--with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2 --with-pa
+    make
+    make install
+    cd ..
+} 1>> shairport-sync_stdout.log 2>> shairport-sync_stderr.log
 
 echo "Configuring nqptp & shairport-sync..."
 # Set the audio output device to the desired output devices...
@@ -170,23 +170,19 @@ oldAlsaDevice=\\\/\\\/\\toutput_device\ =\ \"default\"\;
 newAlsaDevice=\\toutput_device\ =\ \"$shairportAudioDevice\"\;
  sed -i "s/^$oldAlsaDevice/$newAlsaDevice/" $shairportConfigFile
 
-echo "Starting nqptp & shairport-sync..."
-systemctl enable nqptp
-systemctl start nqptp
-systemctl enable shairport-sync
-systemctl start shairport-sync
 
 echo "-----------------------------   owntone    -----------------------------------"
-# need these as of 20240804
 echo "Installing owntone..."
-git clone https://github.com/owntone/owntone-server.git
-cd owntone-server
-autoreconf -i
-#enable-install-user means that a User and Group will be added for owntone
-./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-install-user --with-pulseaudio
-make
-make install
-cd ..
+{
+    git clone https://github.com/owntone/owntone-server.git
+    cd owntone-server
+    autoreconf -i
+    #enable-install-user means that a User and Group will be added for owntone
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-install-user --with-pulseaudio
+    make
+    make install
+    cd ..
+} 1>> owntone_install_stdout.log 2>> owntone_install_stderr.log
 
 echo "Configuring owntone..."
 # Change the directories{} entry in the library{} element to point to our music directory
@@ -196,5 +192,24 @@ oldOwntoneDirpath="\tdirectories = { \"/srv/music\" }";
 newOwntoneDirpath="\tdirectories = { \"$musicFolder\" }";
 sed -i "s/^$oldOwntoneDirpath/$newOwntoneDirpath/" $owntoneConfigFile
 
-echo "Starting owntone..."
-systemctl start owntone
+
+echo "-----------------------------   Startup    -----------------------------------"
+startService() {
+    echo "Starting $1..."
+    systemctl enable $1
+    systemctl start $1
+    if systemctl is-active --quiet $1
+    then
+	echo "...Started $1!"
+    else
+	echo "...Failed to start " $1
+    fi
+}
+
+sudo service smbd stop
+sudo service smbd start
+
+startService bt_speaker
+startService nqptp
+startService shairport-sync
+startService owntone
